@@ -3,7 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+
+	"food-delivery/module/note/notemodel"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -16,26 +19,8 @@ type LoginData struct {
 	Password string `json:"password" binding:"required"`
 }
 
-const noteTableName = "notes"
-
-// Note is a entity for note
-type Note struct {
-	ID      int    `json:"id" gorm:"column:id"`
-	Title   string `json:"title" gorm:"column:title"`
-	Content string `json:"content" gorm:"column:content"`
-	// Status   uint      `json:"status" gorm:"column:status"`
-	// CreateAt time.Time `json:"created_at" gorm:"column:created_at"`
-	// UpdateAt time.Time `json:"updated_at" gorm:"column:updated_at"`
-}
-
-// TableName is the table name of note from DB
-func (Note) TableName() string {
-	return noteTableName
-}
-
 func main() {
-
-	dsn := "root:chungbd@tcp(127.0.0.1:3306)/food_delivery?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := os.Getenv("DB_CONN")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -60,7 +45,7 @@ func main() {
 		// 	Username: "chungbui",
 		// 	Password: "123456",
 		// })
-		c.JSON(http.StatusOK, Note{})
+		c.JSON(http.StatusOK, notemodel.Note{})
 	})
 
 	router.POST("/demo", func(c *gin.Context) {
@@ -77,7 +62,7 @@ func main() {
 	notes := router.Group("/notes")
 	{
 		notes.GET("", func(c *gin.Context) {
-			var notes []Note
+			var notes []notemodel.Note
 
 			var limit int
 			var page int
@@ -93,7 +78,7 @@ func main() {
 				page = rPage
 			}
 
-			if err := db.Table(noteTableName).
+			if err := db.Table(notemodel.NoteTableName).
 				Limit(limit).
 				Offset(page).
 				Find(&notes).Error; err != nil {
@@ -104,7 +89,7 @@ func main() {
 			}
 		})
 		notes.POST("", func(c *gin.Context) {
-			var note Note
+			var note notemodel.Note
 
 			if err := c.ShouldBind(&note); err != nil {
 				c.AbortWithStatusJSON(400, gin.H{"message": err})
@@ -122,7 +107,7 @@ func main() {
 		notes.GET("/:note-id", func(c *gin.Context) {
 			id := c.Param("note-id")
 
-			var note Note
+			var note notemodel.Note
 
 			if err := db.Table(note.TableName()).
 				Where("id = ?", id).First(&note).Error; err != nil {
