@@ -1,13 +1,15 @@
 package main
 
 import (
+	"food-delivery/common"
+	"food-delivery/module/note/notestorage"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
+	"food-delivery/module/note/notebusiness"
 	"food-delivery/module/note/notemodel"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -117,6 +119,33 @@ func main() {
 				c.JSON(http.StatusOK, gin.H{"data": note})
 			}
 		})
+		notes.DELETE("/:note-id", func(c *gin.Context) {
+			id, _ := strconv.Atoi(c.Param("note-id"))
+
+			store := notestorage.NewSQLStore(db)
+			biz := notebusiness.NewDeleteNoteBiz(store)
+
+			if err := biz.DeleteNote(id); err != nil {
+				c.JSON(401, gin.H{"error": err.Error()})
+				return
+			}
+
+			c.JSON(http.StatusOK, gin.H{"data": 1})
+		})
 	}
-	router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	_ = router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+type fakeDeleteNoteStore struct{}
+
+func (fakeDeleteNoteStore) FindDataWithCondition(condition map[string]interface{}) (*notemodel.Note, error) {
+	return &notemodel.Note{
+		SQLModel: common.SQLModel{ID: 1, Status: 1},
+		Title:    "",
+		Content:  "",
+	}, nil
+}
+
+func (fakeDeleteNoteStore) Delete(id int) error {
+	return nil
 }
