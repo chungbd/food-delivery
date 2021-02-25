@@ -2,13 +2,13 @@ package main
 
 import (
 	"food-delivery/common"
-	"food-delivery/module/note/notestorage"
+	"food-delivery/component/appcontext"
+	"food-delivery/module/note/notetransport/ginnote"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 
-	"food-delivery/module/note/notebusiness"
 	"food-delivery/module/note/notemodel"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -29,7 +29,9 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	db = db.Debug()
 	log.Println("Connected to DB.", db)
+	appCtx := appcontext.New(db)
 
 	// if err := db.Create(&note).Error; err != nil {
 	// 	log.Println("Can not create a note", db)
@@ -119,19 +121,7 @@ func main() {
 				c.JSON(http.StatusOK, gin.H{"data": note})
 			}
 		})
-		notes.DELETE("/:note-id", func(c *gin.Context) {
-			id, _ := strconv.Atoi(c.Param("note-id"))
-
-			store := notestorage.NewSQLStore(db)
-			biz := notebusiness.NewDeleteNoteBiz(store)
-
-			if err := biz.DeleteNote(id); err != nil {
-				c.JSON(401, gin.H{"error": err.Error()})
-				return
-			}
-
-			c.JSON(http.StatusOK, gin.H{"data": 1})
-		})
+		notes.DELETE("/:note-id", ginnote.DeleteNote(appCtx))
 	}
 	_ = router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
