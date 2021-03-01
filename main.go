@@ -3,16 +3,14 @@ package main
 import (
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
-	"food-delivery/module/note/notetransport/ginnote"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
-
 	"food-delivery/module/note/notemodel"
+	"food-delivery/module/note/notetransport/ginnote"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
+	"os"
 )
 
 // LoginData is login body
@@ -65,33 +63,33 @@ func main() {
 
 	notes := router.Group("/notes")
 	{
-		notes.GET("", func(c *gin.Context) {
-			var notes []notemodel.Note
-
-			var limit int
-			var page int
-
-			limitStr := c.DefaultQuery("limit", "10")
-			rawPage := c.DefaultQuery("page", "0")
-
-			if rLimit, err := strconv.Atoi(limitStr); err == nil {
-				limit = rLimit
-			}
-
-			if rPage, err := strconv.Atoi(rawPage); err == nil {
-				page = rPage
-			}
-
-			if err := db.Table(notemodel.NoteTableName).
-				Limit(limit).
-				Offset(page).
-				Find(&notes).Error; err != nil {
-				log.Println("can't get any notes", err)
-				c.AbortWithStatusJSON(http.StatusOK, gin.H{"message": "err"})
-			} else {
-				c.JSON(http.StatusOK, gin.H{"data": notes})
-			}
-		})
+		//notes.GET("", func(c *gin.Context) {
+		//	var notes []notemodel.Note
+		//
+		//	var limit int
+		//	var page int
+		//
+		//	limitStr := c.DefaultQuery("limit", "10")
+		//	rawPage := c.DefaultQuery("page", "0")
+		//
+		//	if rLimit, err := strconv.Atoi(limitStr); err == nil {
+		//		limit = rLimit
+		//	}
+		//
+		//	if rPage, err := strconv.Atoi(rawPage); err == nil {
+		//		page = rPage
+		//	}
+		//
+		//	if err := db.Table(notemodel.NoteTableName).
+		//		Limit(limit).
+		//		Offset(page).
+		//		Find(&notes).Error; err != nil {
+		//		log.Println("can't get any notes", err)
+		//		c.AbortWithStatusJSON(http.StatusOK, gin.H{"message": "err"})
+		//	} else {
+		//		c.JSON(http.StatusOK, gin.H{"data": notes})
+		//	}
+		//})
 		notes.POST("", func(c *gin.Context) {
 			var note notemodel.Note
 
@@ -121,6 +119,7 @@ func main() {
 				c.JSON(http.StatusOK, gin.H{"data": note})
 			}
 		})
+		notes.GET("", ginnote.ListNote(appCtx))
 		notes.DELETE("/:note-id", ginnote.DeleteNote(appCtx))
 	}
 	_ = router.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
