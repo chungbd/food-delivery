@@ -2,6 +2,7 @@ package notebusiness
 
 import (
 	"errors"
+	"food-delivery/common"
 	"food-delivery/module/note/notemodel"
 )
 
@@ -28,7 +29,10 @@ func (biz *deleteNoteBiz) DeleteNote(noteId int) error {
 	note, err := biz.store.FindDataWithCondition(map[string]interface{}{"id": noteId})
 
 	if err != nil {
-		return err
+		if err == common.RecordNotFound {
+			return common.ErrEntityNotFound(notemodel.EntityName, err)
+		}
+		return common.ErrCannotDeleteEntity(notemodel.EntityName, err)
 	}
 
 	if note.Status == 0 {

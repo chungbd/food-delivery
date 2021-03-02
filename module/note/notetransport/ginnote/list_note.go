@@ -10,19 +10,25 @@ import (
 
 func ListNote(context common.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		paging := common.Paging{}
+
+		if err := c.ShouldBind(&paging); err != nil {
+			c.AbortWithStatusJSON(400, gin.H{"message": err})
+			return
+		}
+
 		db := context.GetMainDBConnection()
 
-		paging := common.Paging{}
 		paging.Fulfill()
 		store := notestorage.NewSQLStore(db)
 		biz := notebusiness.NewListNoteBiz(store)
 
 		result, err := biz.ListNote(&paging)
 		if err != nil {
-			c.JSON(401, gin.H{"error": err.Error()})
+			c.JSON(401, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": result})
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
 	}
 }

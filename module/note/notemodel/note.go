@@ -3,6 +3,7 @@ package notemodel
 import "food-delivery/common"
 
 // NoteTableName is for mysql table name
+const EntityName = "Note"
 const NoteTableName = "notes"
 
 // Note is a entity for note

@@ -18,10 +18,10 @@ func DeleteNote(context common.AppContext) func(c *gin.Context) {
 		biz := notebusiness.NewDeleteNoteBiz(store)
 
 		if err := biz.DeleteNote(id); err != nil {
-			c.JSON(401, gin.H{"error": err.Error()})
+			c.JSON(401, err)
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"data": 1})
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
 	}
 }
