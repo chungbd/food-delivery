@@ -32,11 +32,12 @@ func (biz *deleteNoteBiz) DeleteNote(noteId int) error {
 		if err == common.RecordNotFound {
 			return common.ErrEntityNotFound(notemodel.EntityName, err)
 		}
-		return common.ErrCannotDeleteEntity(notemodel.EntityName, err)
+		return err
 	}
 
 	if note.Status == 0 {
-		return errors.New("note has been deleted before")
+		//return common.ErrCannotDeleteEntity()
+		return common.ErrDB(errors.New("note has been deleted before"))
 	}
 
 	if err := biz.store.Delete(note.ID); err != nil {
