@@ -7,27 +7,27 @@ import (
 	"food-delivery/module/note/notemodel"
 )
 
-type DeleteNoteStore interface {
+type UpdateNoteStore interface {
 	FindDataWithCondition(ctx context.Context, condition map[string]interface{}) (*notemodel.Note, error)
-	Delete(ctx context.Context, id int) error
+	Update(ctx context.Context, note notemodel.UpdateNote) error
 }
 
-type deleteNoteBiz struct {
-	store DeleteNoteStore
+type updateNoteBiz struct {
+	store UpdateNoteStore
 }
 
-func NewDeleteNoteBiz(store DeleteNoteStore) *deleteNoteBiz {
-	return &deleteNoteBiz{store: store}
+func NewUpdateNoteBiz(store UpdateNoteStore) *updateNoteBiz {
+	return &updateNoteBiz{store: store}
 }
 
-func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
+func (biz *updateNoteBiz) UpdateNote(ctx context.Context, data notemodel.UpdateNote) error {
 	// Find note by id
 	// if old data has status is 0
 	// => error: note has been deleted
 	// => error: note have been deleted
 	// else
 	// delete note
-	note, err := biz.store.FindDataWithCondition(ctx, map[string]interface{}{"id": noteId})
+	note, err := biz.store.FindDataWithCondition(ctx, map[string]interface{}{"id": data.Id})
 
 	if err != nil {
 		if err == common.RecordNotFound {
@@ -41,8 +41,8 @@ func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
 		return common.ErrDB(errors.New("note has been deleted before"))
 	}
 
-	if err := biz.store.Delete(ctx, note.ID); err != nil {
-		return err
+	if err := biz.store.Update(ctx, data); err != nil {
+		return common.ErrCannotUpdateEntity(note.TableName(), err)
 	}
 
 	return nil

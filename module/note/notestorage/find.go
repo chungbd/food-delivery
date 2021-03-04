@@ -1,12 +1,13 @@
 package notestorage
 
 import (
+	"context"
 	"food-delivery/common"
 	"food-delivery/module/note/notemodel"
 	"gorm.io/gorm"
 )
 
-func (s *store) FindDataWithCondition(condition map[string]interface{}) (*notemodel.Note, error) {
+func (s *store) FindDataWithCondition(ctx context.Context, condition map[string]interface{}) (*notemodel.Note, error) {
 	db := s.db
 
 	var note notemodel.Note

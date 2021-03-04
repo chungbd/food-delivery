@@ -1,8 +1,11 @@
 package notestorage
 
-import "food-delivery/module/note/notemodel"
+import (
+	"context"
+	"food-delivery/module/note/notemodel"
+)
 
-func (s *store) Delete(id int) error {
+func (s *store) Delete(ctx context.Context, id int) error {
 	db := s.db
 
 	if err := db.Table(notemodel.Note{}.TableName()).

@@ -1,10 +1,16 @@
 package notemodel
 
-import "food-delivery/common"
+import (
+	"food-delivery/common"
+)
 
 // NoteTableName is for mysql table name
 const EntityName = "Note"
 const NoteTableName = "notes"
+
+var (
+	ErrNoteDeleted = common.NewCustomError(nil, "note has been deleted before", "ErrNoteDeleted")
+)
 
 // Note is a entity for note
 type Note struct {

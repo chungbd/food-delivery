@@ -23,7 +23,7 @@ func ListNote(context common.AppContext) func(c *gin.Context) {
 		store := notestorage.NewSQLStore(db)
 		biz := notebusiness.NewListNoteBiz(store)
 
-		result, err := biz.ListNote(&paging)
+		result, err := biz.ListNote(c.Request.Context(), &paging)
 		if err != nil {
 			c.JSON(401, err)
 			return
