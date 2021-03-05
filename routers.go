@@ -33,6 +33,7 @@ func setupRouter(router *gin.Engine, ctx common.AppContext) {
 	notes := router.Group("/notes")
 	{
 		notes.PUT("/:note-id", ginnote.UpdateNote(ctx))
+		notes.POST("", ginnote.CreateNote(ctx))
 		//notes.GET("/:note-id", func(c *gin.Context) {
 		//	id := c.Param("note-id")
 		//
