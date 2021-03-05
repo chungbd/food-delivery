@@ -16,6 +16,7 @@ func CreateNote(context common.AppContext) func(c *gin.Context) {
 
 		if err := c.ShouldBind(&data); err != nil {
 			c.JSON(400, common.ErrInvalidRequest(err))
+			return
 		}
 
 		store := notestorage.NewSQLStore(db)
