@@ -7,19 +7,25 @@ import (
 	"food-delivery/module/note/notestorage"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"strconv"
 )
 
 func UpdateNote(context common.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var data notemodel.UpdateNote
-		id, _ := strconv.Atoi(c.Param("note-id"))
+		//id, _ := strconv.Atoi(c.Param("note-id"))
+		id := c.Param("note-id")
 
-		if err := c.ShouldBind(&data); err != nil {
-			c.JSON(400, common.ErrInvalidRequest(err))
+		uid, err := common.FromBase58(id)
+
+		if err != nil {
+			panic(common.ErrInvalidRequest(err))
 		}
 
-		data.Id = id
+		if err := c.ShouldBind(&data); err != nil {
+			panic(common.ErrInvalidRequest(err))
+		}
+
+		data.Id = int(uid.GetLocalID())
 
 		db := context.GetMainDBConnection()
 

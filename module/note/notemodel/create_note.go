@@ -4,8 +4,10 @@ import "food-delivery/common"
 
 type CreateNote struct {
 	common.SQLModel `json:",inline"`
-	Title           string `json:"title" form:"title" gorm:"column:title" binding:"required"`
-	Content         string `json:"content" form:"content" gorm:"column:content" binding:"required"`
+	Title           string         `json:"title" form:"title" gorm:"column:title" binding:"required"`
+	Content         string         `json:"content" form:"content" gorm:"column:content" binding:"required"`
+	Cover           *common.Image  `json:"cover"`
+	Photos          *common.Images `json:"photos"`
 }
 
 // TableName is the table name of note from DB

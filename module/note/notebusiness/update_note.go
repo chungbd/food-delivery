@@ -2,7 +2,6 @@ package notebusiness
 
 import (
 	"context"
-	"errors"
 	"food-delivery/common"
 	"food-delivery/module/note/notemodel"
 )
@@ -38,7 +37,7 @@ func (biz *updateNoteBiz) UpdateNote(ctx context.Context, data notemodel.UpdateN
 
 	if note.Status == 0 {
 		//return common.ErrCannotDeleteEntity()
-		return common.ErrDB(errors.New("note has been deleted before"))
+		return notemodel.ErrNoteDeleted
 	}
 
 	if err := biz.store.Update(ctx, data); err != nil {

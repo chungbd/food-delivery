@@ -9,7 +9,7 @@ import (
 func (s *store) Create(ctx context.Context, note *notemodel.CreateNote) error {
 	db := s.db.Begin()
 	db = db.Table(note.TableName())
-
+	note.Status = 1
 	if err := db.Create(note).Error; err != nil {
 		db.Rollback()
 		return common.ErrDB(err)

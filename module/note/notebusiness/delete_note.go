@@ -41,7 +41,7 @@ func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
 		return common.ErrDB(errors.New("note has been deleted before"))
 	}
 
-	if err := biz.store.Delete(ctx, note.ID); err != nil {
+	if err := biz.store.Delete(ctx, note.Id); err != nil {
 		return err
 	}
 

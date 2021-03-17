@@ -27,6 +27,6 @@ func CreateNote(context common.AppContext) func(c *gin.Context) {
 			return
 		}
 
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.ID))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data.Id))
 	}
 }
