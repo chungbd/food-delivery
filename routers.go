@@ -2,6 +2,7 @@ package main
 
 import (
 	"food-delivery/common"
+	"food-delivery/middleware"
 	"food-delivery/module/note/notemodel"
 	"food-delivery/module/note/notetransport/ginnote"
 	"food-delivery/module/user/usertransport/ginuser"
@@ -19,6 +20,7 @@ func setupRouter(router *gin.Engine, ctx common.AppContext) {
 	})
 
 	router.POST("/register", ginuser.Register(ctx))
+	router.POST("/login", ginuser.Login(ctx))
 
 	router.GET("/demo", func(c *gin.Context) {
 		c.JSON(http.StatusOK, notemodel.Note{})
@@ -35,7 +37,7 @@ func setupRouter(router *gin.Engine, ctx common.AppContext) {
 		c.JSON(http.StatusOK, data)
 	})
 
-	notes := router.Group("/notes")
+	notes := router.Group("/notes", middleware.Recover(ctx))
 	{
 		notes.PUT("/:note-id", ginnote.UpdateNote(ctx))
 		notes.POST("", ginnote.CreateNote(ctx))

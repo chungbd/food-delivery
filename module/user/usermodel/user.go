@@ -8,7 +8,7 @@ const TableName = "users"
 type User struct {
 	common.SQLModel `json:",inline"`
 	Email           string        `json:"email" gorm:"column:email;"`
-	Password        string        `json:"password" gorm:"column:password;"`
+	Password        string        `json:"-" gorm:"column:password;"`
 	Salt            string        `json:"-" gorm:"column:salt;"`
 	LastName        string        `json:"last_name" gorm:"column:last_name;"`
 	FirstName       string        `json:"first_name" gorm:"column:first_name;"`

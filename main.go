@@ -1,17 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"food-delivery/common"
 	"food-delivery/component/appcontext"
 	"food-delivery/module/note/notemodel"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"time"
 )
 
 // LoginData is login body
@@ -24,17 +21,17 @@ func main() {
 	secretKey := os.Getenv("SYSTEM_SECRET")
 
 	// Create the token
-	token := jwt.New(jwt.GetSigningMethod("HS256"))
-
-	// Set some claims
-	token.Claims = jwt.MapClaims{
-		"foo": "bar",
-		"exp": time.Now().Add(time.Hour * 72).Unix(),
-	}
+	//token := jwt.New(jwt.GetSigningMethod("HS256"))
+	//
+	//// Set some claims
+	//token.Claims = jwt.MapClaims{
+	//	"foo": "bar",
+	//	"exp": time.Now().Add(time.Hour * 72).Unix(),
+	//}
 
 	// Sign and get the complete encoded token as a string
-	tokenString, err := token.SignedString([]byte(secretKey))
-	fmt.Println(tokenString, err)
+	//tokenString, err := token.SignedString([]byte(secretKey))
+	//fmt.Println(tokenString, err)
 
 	dsn := os.Getenv("DB_CONN")
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -45,7 +42,7 @@ func main() {
 
 	db = db.Debug()
 	log.Println("Connected to DB.", db)
-	appCtx := appcontext.New(db)
+	appCtx := appcontext.New(db, secretKey)
 
 	router := gin.Default()
 	setupRouter(router, appCtx)
