@@ -21,6 +21,7 @@ func setupRouter(router *gin.Engine, ctx common.AppContext) {
 
 	router.POST("/register", ginuser.Register(ctx))
 	router.POST("/login", ginuser.Login(ctx))
+	router.GET("/profile", middleware.RequiredAuth(ctx), ginuser.GetProfile(ctx))
 
 	router.GET("/demo", func(c *gin.Context) {
 		c.JSON(http.StatusOK, notemodel.Note{})

@@ -20,3 +20,15 @@ type User struct {
 func (User) TableName() string {
 	return TableName
 }
+
+func (u User) GetUserId() int {
+	return u.Id
+}
+
+func (u User) GetEmail() string {
+	return u.Email
+}
+
+func (u User) GetRole() string {
+	return u.Role
+}
