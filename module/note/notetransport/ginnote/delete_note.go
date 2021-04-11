@@ -4,9 +4,10 @@ import (
 	"food-delivery/common"
 	"food-delivery/module/note/notebusiness"
 	"food-delivery/module/note/notestorage"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func DeleteNote(context common.AppContext) func(c *gin.Context) {
@@ -14,8 +15,10 @@ func DeleteNote(context common.AppContext) func(c *gin.Context) {
 		id, _ := strconv.Atoi(c.Param("note-id"))
 		db := context.GetMainDBConnection()
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		store := notestorage.NewSQLStore(db)
-		biz := notebusiness.NewDeleteNoteBiz(store)
+		biz := notebusiness.NewDeleteNoteBiz(store, requester)
 
 		if err := biz.DeleteNote(c.Request.Context(), id); err != nil {
 			c.JSON(401, err)

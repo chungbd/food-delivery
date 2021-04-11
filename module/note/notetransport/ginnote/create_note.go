@@ -5,12 +5,15 @@ import (
 	"food-delivery/module/note/notebusiness"
 	"food-delivery/module/note/notemodel"
 	"food-delivery/module/note/notestorage"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CreateNote(context common.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		db := context.GetMainDBConnection()
 		var data notemodel.CreateNote
 
@@ -21,6 +24,7 @@ func CreateNote(context common.AppContext) func(c *gin.Context) {
 
 		store := notestorage.NewSQLStore(db)
 		biz := notebusiness.NewCreateNoteBiz(store)
+		data.UserId = requester.GetUserId()
 
 		if err := biz.CreateNote(c.Request.Context(), &data); err != nil {
 			c.JSON(401, err)

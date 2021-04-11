@@ -20,6 +20,7 @@ type Note struct {
 	Content         string         `json:"content" gorm:"column:content"`
 	Cover           *common.Image  `json:"cover"`
 	Photos          *common.Images `json:"photos"`
+	UserId          int            `json:"user_id" gorm:"column:user_id;"`
 	// Status   uint      `json:"status" gorm:"column:status"`
 	// CreateAt time.Time `json:"created_at" gorm:"column:created_at"`
 	// UpdateAt time.Time `json:"updated_at" gorm:"column:updated_at"`

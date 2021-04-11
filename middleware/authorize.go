@@ -2,20 +2,20 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"food-delivery/common"
 	"food-delivery/component/tokenprovider/jwt"
 	"food-delivery/module/user/userstorage"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 func ErrWrongAuthHeader(err error) *common.AppError {
 	return common.NewCustomError(
 		err,
-		fmt.Sprintf("wrong authen header"),
-		fmt.Sprintf("ErrWrongAuthHeader"),
+		"wrong authen header",
+		"ErrWrongAuthHeader",
 	)
 }
 
